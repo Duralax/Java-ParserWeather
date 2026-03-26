@@ -1,4 +1,81 @@
 package main;
 
 public class WeatherData {
+
+    private String city;
+    private String current_temperature;
+    private String temperature_feel;
+    private String description;
+    private String pressure;
+    private String wind;
+    private String humidity;
+
+    public WeatherData(){
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCurrent_temperature() {
+        return current_temperature;
+    }
+
+    public String getTemperature_feel() {
+        return temperature_feel;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPressure() {
+        return pressure;
+    }
+
+    public String getWind() {
+        return wind;
+    }
+
+    public String getHumidity() {
+        return humidity;
+    }
+
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setCurrent_temperature(String current_temperature) {
+        this.current_temperature = current_temperature;
+    }
+
+    public void setTemperature_feel(String temperature_feel) {
+        this.temperature_feel = temperature_feel;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPressure(String pressure) {
+        this.pressure = pressure;
+    }
+
+    public void setWind(String wind) {
+        this.wind = wind;
+    }
+
+    public void setHumidity(String humidity) {
+        this.humidity = humidity;
+    }
+
+    public String toString(){
+        return "\nПогода для города: " + city + "\n" +
+                "  Температура: " + current_temperature + " °C по ощущениям как " + temperature_feel + " °C \n" +
+                "  Описание: " + description + "\n" +
+                "  Ветер: " + wind + "\n" +
+                "  Давление: " + pressure + " мм рт. ст. " + "\n" +
+                "  Влажность: " + humidity + "\n";
+    }
 }
