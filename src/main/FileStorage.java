@@ -3,11 +3,10 @@ package main;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
-public class Csv {
+public class FileStorage {
     public void save(WeatherData weather){
         try {
             String filePath = "src/main/weather_data/weather_history.csv";
@@ -34,7 +33,7 @@ public class Csv {
                 DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-                //System.out.println("DEBUG температура перед сохранением: " + weather.getCurrent_temperature());
+                //System.out.println("Температура перед сохранением: " + weather.getCurrent_temperature());
 
                 String line = weather.getDateTime().format(dateFormat) + ";" +
                         weather.getDateTime().format(timeFormat) + ";" +

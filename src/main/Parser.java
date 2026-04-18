@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class Parser {
     private static final String URL_NOW = "https://yandex.ru/pogoda/ru/yekaterinburg";
+    private static final String URL_DETAILS = "https://yandex.ru/pogoda/ru/yekaterinburg/details";
     //private static final String URL_COMMON = "https://www.gismeteo.ru/weather-yekaterinburg-4517/now/";
 
     public WeatherData getCurrentWeather() throws IOException{
@@ -18,7 +19,7 @@ public class Parser {
         WeatherData weather = new WeatherData();
 
         weather.setCity("Екатеринбург");
-        System.out.println("1");
+        //System.out.println("1");
         Element cur_temp_div = doc.selectFirst(".AppLayoutCommon_overlay__h5IHD");
         System.out.println(cur_temp_div);
 
@@ -43,7 +44,7 @@ public class Parser {
             tempFeel = tempFeel.replaceAll("[^0-9+-]", "");
             weather.setTemperature_feel(tempFeel);
         } else {
-            weather.setCurrent_temperature("None");
+            weather.setTemperature_feel("None");
         }
 
         // Для описания погоды (убрать или адаптировать вторую часть описания, можно оставить для прогноза только в начале дня)
@@ -78,13 +79,87 @@ public class Parser {
 
         } else {
             weather.setWind("None");
-
             weather.setPressure("None");
-
             weather.setHumidity("None");
         }
 
         return weather;
+    }
+
+    public WeatherData getForecast(String dayPart) throws IOException {
+        Document doc = Jsoup.connect(URL_DETAILS).userAgent("Chrome/4.0.249.0 Safari/532.5")
+                .timeout(10000)
+                .get();
+
+        WeatherData forecast = new WeatherData();
+        forecast.setCity("Екатеринбург");
+
+        System.out.println(doc.body());
+
+        String part = "";
+        Element card = null;
+        if (dayPart.equals("утро")){
+            Elements cards = doc.select("li.AppForecastDay_dayCard__rIRAn");
+            System.out.println("КАРТОЧКИ");
+            System.out.println("\n" + "\n" + cards);
+            card = cards.get(1);
+            part = "m";
+        } else if (dayPart.equals("день") || dayPart.equals("вечер")) {
+            card = doc.selectFirst("li.AppForecastDay_dayCard__rIRAn");
+            if (dayPart.equals("день")){
+                part = "d";
+            } else if (dayPart.equals("вечер")){
+                part = "e";
+            }
+        }
+        // Температура
+        Element tempElement = card.selectFirst("[style*='grid-area:" + part + "-temp']");
+        if (tempElement != null) {
+            forecast.setCurrent_temperature(tempElement.text().replace("°", ""));
+        } else {
+            forecast.setCurrent_temperature("None");
+        }
+        // Температура по ощущениям
+        Element feelsTempElement = card.selectFirst("[style*='grid-area:" + part + "-feels']");
+        if (feelsTempElement != null) {
+            forecast.setTemperature_feel(feelsTempElement.text().replace("°", ""));
+        } else {
+            forecast.setTemperature_feel("None");
+        }
+
+        // Описание
+        Element descElement = card.selectFirst("[style*='grid-area:" + part + "-text']");
+        if (descElement != null) {
+            forecast.setDescription(descElement.text());
+        }else {
+            forecast.setDescription("None");
+        }
+
+        // Ветер
+        Element windElement = card.selectFirst("[style*='grid-area:" + part + "-wind']");
+        if (windElement != null) {
+            forecast.setWind(windElement.text());
+        }else {
+            forecast.setWind("None");
+        }
+
+        // Влажность
+        Element humElement = card.selectFirst("[style*='grid-area:" + part + "-hum']");
+        if (humElement != null) {
+            forecast.setHumidity(humElement.text());
+        }else {
+            forecast.setHumidity("None");
+        }
+
+        // Давление
+        Element pressElement = card.selectFirst("[style*='grid-area:" + part + "-press']");
+        if (pressElement != null) {
+            forecast.setPressure(pressElement.text());
+        }else {
+            forecast.setPressure("None");
+        }
+
+        return forecast;
     }
 
 }

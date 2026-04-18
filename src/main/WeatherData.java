@@ -1,7 +1,11 @@
 package main;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class WeatherData {
 
+    private LocalDateTime dateTime;
     private String city;
     private String current_temperature;
     private String temperature_feel;
@@ -11,6 +15,11 @@ public class WeatherData {
     private String humidity;
 
     public WeatherData(){
+        this.dateTime = LocalDateTime.now();
+    }
+    
+    public LocalDateTime getDateTime(){
+        return dateTime;
     }
 
     public String getCity() {
@@ -71,7 +80,10 @@ public class WeatherData {
     }
 
     public String toString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        String formattedDate = dateTime.format(formatter);
         return "\nПогода для города: " + city + "\n" +
+                "  Дата и время: " + formattedDate + "\n" +
                 "  Температура: " + current_temperature + " °C по ощущениям как " + temperature_feel + " °C \n" +
                 "  Описание: " + description + "\n" +
                 "  Ветер: " + wind + "\n" +
