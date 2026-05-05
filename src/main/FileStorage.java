@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 public class FileStorage {
-    public void save(WeatherData weather){
+    public void saveWeather(WeatherData weather, String type, String period){
         try {
             String filePath = "src/main/weather_data/weather_history.csv";
             Files.createDirectories(Paths.get("src/main/weather_data"));
@@ -21,6 +21,8 @@ public class FileStorage {
 
                     writer.println("Дата" + ";" +
                             "Время" + ";" +
+                            "Тип данных" + ";" +
+                            "Период" + ";" +
                             "Город" + ";" +
                             "Температура" + ";" +
                             "Ощущается" + ";" +
@@ -38,6 +40,8 @@ public class FileStorage {
                 String line = weather.getDateTime().format(dateFormat) + ";" +
                         weather.getDateTime().format(timeFormat) + ";" +
                          weather.getCity() + ";" +
+                        type + ";" +
+                        period + ";" +
                         weather.getCurrent_temperature() + ";"  +
                         weather.getTemperature_feel() + ";" +
                         weather.getDescription() + ";" +
@@ -53,4 +57,5 @@ public class FileStorage {
         }
 
     }
+
 }

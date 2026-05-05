@@ -79,6 +79,7 @@ public class WeatherData {
         this.humidity = humidity;
     }
 
+    @Override
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         String formattedDate = dateTime.format(formatter);

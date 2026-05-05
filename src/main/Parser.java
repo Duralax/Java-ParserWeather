@@ -20,13 +20,13 @@ public class Parser {
 
         weather.setCity("Екатеринбург");
         //System.out.println("1");
-        Element cur_temp_div = doc.selectFirst(".AppLayoutCommon_overlay__h5IHD");
+        Element cur_temp_div = doc.selectFirst("[class*=AppLayoutCommon_overlay]");
         System.out.println(cur_temp_div);
 
         // Для текущей температуры - по строкам разбит знак и значение у погоды
 
-        Element tempElement = doc.selectFirst(".AppFactTemperature_value__2qhsG");
-        Element signElement = doc.selectFirst(".AppFactTemperature_sign__1MeN4");
+        Element tempElement = doc.selectFirst("[class*=AppFactTemperature_value]");
+        Element signElement = doc.selectFirst("[class*=AppFactTemperature_sign]");
         if (tempElement != null && signElement != null) {
             String temp = tempElement.text();
             String sign = signElement.text();
@@ -37,7 +37,7 @@ public class Parser {
 
         // Для ощущается как - в строке будет Ощущается как что-то
 
-        Element tempFeelElement = doc.selectFirst(".AppFact_feels__base__bw86b");
+        Element tempFeelElement = doc.selectFirst("[class*=AppFact_feels__base]");
 
         if (tempFeelElement != null) {
             String tempFeel = tempFeelElement.text();
@@ -49,8 +49,8 @@ public class Parser {
 
         // Для описания погоды (убрать или адаптировать вторую часть описания, можно оставить для прогноза только в начале дня)
 
-        Element descElement = doc.selectFirst(".AppFact_warning__first_text___wtkV");
-        Element secondDescElement = doc.selectFirst(".AppFact_warning__second__BMdKC");
+        Element descElement = doc.selectFirst("[class*=AppFact_warning__first_text]");
+        Element secondDescElement = doc.selectFirst("[class*=AppFact_warning__second]");
 
         if (descElement != null) {
             String description = descElement.text() + ". ";
@@ -65,7 +65,7 @@ public class Parser {
 
         // Для данных с давлением, ветром и влажностью
 
-        Elements details = doc.select(".AppFact_details__item__QFIXI");
+        Elements details = doc.select("[class*=AppFact_details__item]");
 
         if (details.size() >= 3) {
             // Для ветра (первый элемент)
@@ -99,13 +99,13 @@ public class Parser {
         String part = "";
         Element card = null;
         if (dayPart.equals("утро")){
-            Elements cards = doc.select("li.AppForecastDay_dayCard__rIRAn");
+            Elements cards = doc.select("li[class*=AppForecastDay_dayCard]");
             System.out.println("КАРТОЧКИ");
             System.out.println("\n" + "\n" + cards);
             card = cards.get(1);
             part = "m";
         } else if (dayPart.equals("день") || dayPart.equals("вечер")) {
-            card = doc.selectFirst("li.AppForecastDay_dayCard__rIRAn");
+            card = doc.selectFirst("li[class*=AppForecastDay_dayCard]");
             if (dayPart.equals("день")){
                 part = "d";
             } else if (dayPart.equals("вечер")){
