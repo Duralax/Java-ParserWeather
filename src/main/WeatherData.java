@@ -81,7 +81,7 @@ public class WeatherData {
 
     @Override
     public String toString(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = dateTime.format(formatter);
         return "\nПогода для города: " + city + "\n" +
                 "  Дата и время: " + formattedDate + "\n" +

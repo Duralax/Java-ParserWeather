@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Java-ParserWeather.iml" filepath="$PROJECT_DIR$/Java-ParserWeather.iml" />
       <module fileurl="file://$PROJECT_DIR$/weather-parser.iml" filepath="$PROJECT_DIR$/weather-parser.iml" />
     </modules>
   </component>

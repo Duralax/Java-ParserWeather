@@ -10,13 +10,18 @@ public class Main {
         Parser parser = new Parser();
         FileStorage csv = new FileStorage();
         // запуск парсинга для прогноза на части дня для утра следующего дня, дня, вечера
-        WeatherData weatherMorningNextDay;
-        WeatherData weatherDayToday;
-        WeatherData weatherEveningToday;
+        WeatherData forecastMorningNextDay = null;
+        WeatherData forecastDayToday = null;
+        WeatherData forecastEveningToday = null;
+        // для теста вывода погоды и
+        WeatherData testForecast = parser.getForecast("утро");
+        WeatherData testWeather = parser.getCurrentWeather();
+        System.out.println(testWeather.toString());
+        System.out.println(testForecast.toString());
 
         WeatherData weather;
 
-        //System.out.println(weatherMorningNextDay.toString());
+        //System.out.println(forecastMorningNextDay.toString());
         while (true){
             LocalTime timeNow = LocalTime.now();
             int hours = timeNow.getHour();
@@ -27,13 +32,14 @@ public class Main {
                     weather = parser.getCurrentWeather();
                     System.out.println(weather.toString());
                     csv.saveWeather(weather, "факт", "утро");
+                    checkAndNotify(weather, forecastMorningNextDay);
+                    
+                    forecastDayToday = parser.getForecast("день");
+                    forecastEveningToday = parser.getForecast("вечер");
 
-                    weatherDayToday = parser.getForecast("день");
-                    weatherEveningToday = parser.getForecast("вечер");
-
-                    csv.saveWeather(weatherDayToday, "прогноз", "день");
-                    csv.saveWeather(weatherEveningToday, "прогноз", "вечер");
-
+                    csv.saveWeather(forecastDayToday, "прогноз", "день");
+                    csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
+                    
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
                 }
@@ -43,9 +49,11 @@ public class Main {
                     weather = parser.getCurrentWeather();
                     System.out.println(weather.toString());
                     csv.saveWeather(weather, "факт", "день");
+                    checkAndNotify(weather, forecastDayToday);
 
-                    weatherEveningToday = parser.getForecast("вечер");
-                    csv.saveWeather(weatherEveningToday, "прогноз", "вечер");
+                    forecastEveningToday = parser.getForecast("вечер");
+                    csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
+
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -56,6 +64,7 @@ public class Main {
                     weather = parser.getCurrentWeather();
                     System.out.println(weather.toString());
                     csv.saveWeather(weather, "факт", "вечер");
+                    checkAndNotify(weather, forecastEveningToday);
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -67,9 +76,10 @@ public class Main {
                     weather = parser.getCurrentWeather();
                     System.out.println(weather.toString());
                     csv.saveWeather(weather, "факт", "поздний вечер");
+                    checkAndNotify(weather, null);
 
-                    weatherMorningNextDay = parser.getForecast("утро");
-                    csv.saveWeather(weatherMorningNextDay, "прогноз", "утро");
+                    forecastMorningNextDay = parser.getForecast("утро");
+                    csv.saveWeather(forecastMorningNextDay, "прогноз", "утро");
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -99,7 +109,7 @@ public class Main {
         }
 
     }
-    public static void checkAndNotify(WeatherData weather, WeatherData forecast, String period){
+    public static void checkAndNotify(WeatherData weather, WeatherData forecast){
         System.out.println("\n--------- Погода ---------");
         // Текущая погода
         System.out.println("Сейчас: \n" + "\t" + weather.getCurrent_temperature() + "°C градусов \n"
@@ -175,9 +185,9 @@ public class Main {
             if (weather.getWind().equals("None") || forecast.getWind().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
             } else {
-                double weatherWind = Double.parseDouble(weather.getWind().replaceAll("[^0-9.,]", "").replace(",", "."));
-                double forecastWind = Double.parseDouble(forecast.getWind().replaceAll("[^0-9.,]", "").replace(",", "."));
-                double windDiff = Math.abs(weatherWind - forecastWind);
+                int weatherWind = Integer.parseInt(weather.getWind().replaceAll("[^0-9.,]", ""));
+                int forecastWind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9.,]", ""));
+                int windDiff = Math.abs(weatherWind - forecastWind);
 
                 if (windDiff >= 2) {
                     System.out.println("  Ветер было " + forecast.getWind() + " стало " + weather.getWind());
