@@ -39,6 +39,9 @@ public class Main {
 
                     csv.saveWeather(forecastDayToday, "прогноз", "день");
                     csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
+                    showForecast(forecastDayToday, "день");
+                    showForecast(forecastEveningToday, "вечер");
+
                     
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -53,7 +56,7 @@ public class Main {
 
                     forecastEveningToday = parser.getForecast("вечер");
                     csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
-
+                    showForecast(forecastEveningToday, "вечер");
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -80,6 +83,7 @@ public class Main {
 
                     forecastMorningNextDay = parser.getForecast("утро");
                     csv.saveWeather(forecastMorningNextDay, "прогноз", "утро");
+                    showForecast(forecastMorningNextDay, "утро");
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -109,6 +113,66 @@ public class Main {
         }
 
     }
+
+    public static void showForecast(WeatherData forecast, String period){
+
+        System.out.println("Прогноз погоды на " + period);
+        System.out.println(forecast.toString());
+
+        String desc = forecast.getDescription().toLowerCase();
+        int temp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9-]", ""));
+        int wind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9-]", ""));
+        int pressure = Integer.parseInt(forecast.getPressure().replaceAll("[^0-9]", ""));
+        int humidity = Integer.parseInt(forecast.getHumidity().replaceAll("[^0-9]", ""));
+
+        if (desc.contains("дождь")) {
+            System.out.println("Ожидается дождь. Возьмите зонт.");
+            if (desc.contains("сильный") || desc.contains("ливень")) {
+                System.out.println("Дождь может быть сильным.");
+            }
+        } else if (desc.contains("снег")) {
+            System.out.println("Ожидается снегопад.");
+            if (desc.contains("метель")) {
+                System.out.println("Возможна метель, ");
+            }
+        }
+
+        // Температура
+        if (temp > 25) {
+            System.out.println("Очень жарко.");
+        } else if (temp > 15) {
+            System.out.println("Тепло. Хорошая погода для прогулок.");
+        } else if (temp > 5) {
+            System.out.println("Ожидается прохладная погода.");
+        } else if (temp > 0) {
+            System.out.println("Холодно, одевайтесь теплее.");
+        } else if (temp < -5) {
+            System.out.println("Ожидается мороз.");
+        }
+
+        // Ветер
+        if (wind > 10) {
+            System.out.println("Сильный ветер.");
+        } else if (wind > 7) {
+            System.out.println("Ветреная погода.");
+        }
+
+        // Давление
+        if (pressure > 755) {
+            System.out.println("Ожидается повышенное давление.");
+        } else if (pressure < 735) {
+            System.out.println("Ожидается пониженное давление, возможна сонливость.");
+        }
+
+        // Влажность
+        if (humidity > 80) {
+            System.out.println("Ожидается высокая влажность, может быть душно.");
+        } else if (humidity < 30) {
+            System.out.println("Ожидается сухой воздух.");
+        }
+
+    }
+
     public static void checkAndNotify(WeatherData weather, WeatherData forecast){
         System.out.println("\n--------- Погода ---------");
         // Текущая погода

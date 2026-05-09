@@ -83,9 +83,9 @@ public class WeatherData {
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = dateTime.format(formatter);
-        return "\nПогода для города: " + city + "\n" +
+        return "\nГород: " + city + "\n" +
                 "  Дата и время: " + formattedDate + "\n" +
-                "  Температура: " + current_temperature + " °C по ощущениям как " + temperature_feel + " °C \n" +
+                "  Температура: " + current_temperature + " °C, по ощущениям как " + temperature_feel + " °C \n" +
                 "  Описание: " + description + "\n" +
                 "  Ветер: " + wind + "\n" +
                 "  Давление: " + pressure + " мм рт. ст. " + "\n" +
