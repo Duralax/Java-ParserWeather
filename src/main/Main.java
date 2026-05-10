@@ -164,16 +164,10 @@ public class Main {
     public static void checkAndNotify(WeatherData weather, WeatherData forecast){
         System.out.println("\n--------- Погода ---------");
         // Текущая погода
-        System.out.println("Сейчас: \n" + "\t" + weather.getCurrent_temperature() + "°C градусов \n"
-                + "\t по ощущениям как " + weather.getTemperature_feel() + "°C, \n" +
-                "\t" + weather.getDescription() + "\n" +
-                "\t Давление: " + weather.getPressure() + "\n" +
-                "\t Ветер: " + weather.getWind() + "\n" +
-                "\t Влажность: " + weather.getHumidity() + "\n"
-        );
+        System.out.println("Сейчас: \n" + weather.toString());
         // Если прогноз есть
         if (forecast != null) {
-            System.out.println("\nОтличия от прогноза:");
+            System.out.println("\n\nОтличия от прогноза:");
             boolean hasDiff = false;
 
             // Температура
@@ -205,9 +199,9 @@ public class Main {
 
                 if (Math.abs(feelDiff) >= 4) {
                     if (feelDiff > 0){
-                        System.out.println("Ощущается теплее на " + feelDiff + " °C");
+                        System.out.println("  Ощущается теплее на " + feelDiff + " °C");
                     } else {
-                        System.out.println("Ощущается холоднее на " + feelDiff + " °C");
+                        System.out.println("  Ощущается холоднее на " + feelDiff + " °C");
                     }
                     hasDiff = true;
                 }
@@ -261,7 +255,7 @@ public class Main {
                 }
 
                 if (!hasDiff) {
-                    System.out.println("  Прогноз полностью совпал с фактической погодой");
+                    System.out.println("Прогноз полностью совпал с фактической погодой");
                 }
             }
         }
