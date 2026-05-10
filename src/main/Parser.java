@@ -41,7 +41,7 @@ public class Parser {
 
         if (tempFeelElement != null) {
             String tempFeel = tempFeelElement.text();
-            tempFeel = tempFeel.replaceAll("[^0-9+-]", "");
+            tempFeel = tempFeel.replaceAll("[^0-9+−]", "");
             weather.setTemperature_feel(tempFeel);
         } else {
             weather.setTemperature_feel("None");
