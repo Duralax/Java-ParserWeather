@@ -18,6 +18,8 @@ public class Main {
         WeatherData testWeather = parser.getCurrentWeather();
         System.out.println(testWeather.toString());
         System.out.println(testForecast.toString());
+        checkAndNotify(testWeather, testForecast);
+        showForecast(testForecast, "-");
 
         WeatherData weather;
 
@@ -103,7 +105,6 @@ public class Main {
                 }
             }
 
-
             try {
                 Thread.sleep(60 * 1000);
             } catch (InterruptedException e) {
@@ -116,12 +117,12 @@ public class Main {
 
     public static void showForecast(WeatherData forecast, String period){
 
-        System.out.println("Прогноз погоды на " + period);
+        System.out.println("\nПрогноз погоды на " + period);
         System.out.println(forecast.toString());
 
         String desc = forecast.getDescription().toLowerCase();
         int temp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9-]", ""));
-        int wind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9-]", ""));
+        int wind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9]", ""));
         int pressure = Integer.parseInt(forecast.getPressure().replaceAll("[^0-9]", ""));
         int humidity = Integer.parseInt(forecast.getHumidity().replaceAll("[^0-9]", ""));
 
@@ -164,10 +165,10 @@ public class Main {
     public static void checkAndNotify(WeatherData weather, WeatherData forecast){
         System.out.println("\n--------- Погода ---------");
         // Текущая погода
-        System.out.println("Сейчас: \n" + weather.toString());
+        System.out.println("Сейчас: " + weather.toString());
         // Если прогноз есть
         if (forecast != null) {
-            System.out.println("\n\nОтличия от прогноза:");
+            System.out.println("Отличия от прогноза:");
             boolean hasDiff = false;
 
             // Температура
@@ -180,9 +181,9 @@ public class Main {
 
                 if (Math.abs(tempDiff) >= 4) {
                     if (tempDiff > 0){
-                        System.out.println("Теплее на " + tempDiff + " °C");
+                        System.out.println(" Теплее на " + tempDiff + " °C");
                     } else {
-                        System.out.println("Холоднее на " + tempDiff + " °C");
+                        System.out.println(" Холоднее на " + tempDiff + " °C");
                     }
                     hasDiff = true;
                 }
@@ -212,7 +213,7 @@ public class Main {
                 System.out.println("Данные для сравнения неполные");
             } else {
                 if (!weather.getDescription().split("\\.")[0].equalsIgnoreCase(forecast.getDescription())) {
-                    System.out.println("  Описание: " + forecast.getDescription() + " → " + weather.getDescription().split("\\.")[0]);
+                    System.out.println("  Описание: " + forecast.getDescription() + " -> " + weather.getDescription().split("\\.")[0]);
                     hasDiff = true;
                 }
 
@@ -231,8 +232,8 @@ public class Main {
             if (weather.getWind().equals("None") || forecast.getWind().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
             } else {
-                int weatherWind = Integer.parseInt(weather.getWind().replaceAll("[^0-9.,]", ""));
-                int forecastWind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9.,]", ""));
+                int weatherWind = Integer.parseInt(weather.getWind().replaceAll("[^0-9]", ""));
+                int forecastWind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9]", ""));
                 int windDiff = Math.abs(weatherWind - forecastWind);
 
                 if (windDiff >= 2) {
