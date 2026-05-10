@@ -176,15 +176,15 @@ public class Main {
             if (weather.getCurrent_temperature().equals("None") || forecast.getCurrent_temperature().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
             } else {
-                int weatherTemp = Integer.parseInt(weather.getCurrent_temperature().replaceAll("[^0-9−-]", ""));
-                int forecastTemp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9−-]", ""));
+                int weatherTemp = Integer.parseInt(weather.getCurrent_temperature().replaceAll("[^0-9−]", ""));
+                int forecastTemp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9−]", ""));
                 int tempDiff = weatherTemp - forecastTemp;
 
                 if (Math.abs(tempDiff) >= 4) {
                     if (tempDiff > 0){
-                        System.out.println(" Теплее на " +  Math.abs(tempDiff) + " °C");
+                        System.out.println("  Теплее на " +  Math.abs(tempDiff) + " °C");
                     } else {
-                        System.out.println(" Холоднее на " +  Math.abs(tempDiff) + " °C");
+                        System.out.println("  Холоднее на " +  Math.abs(tempDiff) + " °C");
                     }
                     hasDiff = true;
                 }
@@ -218,7 +218,12 @@ public class Main {
                     hasDiff = true;
                 }
 
-                // Давление разница 10+ мм
+            }
+
+            // Давление разница 10+ мм
+            if (weather.getPressure().equals("None") || forecast.getPressure().equals("None")) {
+                System.out.println("Данные для сравнения неполные");
+            }else {
                 int weatherPress = Integer.parseInt(weather.getPressure().replaceAll("[^0-9]", ""));
                 int forecastPress = Integer.parseInt(forecast.getPressure().replaceAll("[^0-9]", ""));
                 int pressDiff = Math.abs(weatherPress - forecastPress);
@@ -228,7 +233,6 @@ public class Main {
                     hasDiff = true;
                 }
             }
-
             // Ветер разница 2+
             if (weather.getWind().equals("None") || forecast.getWind().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
@@ -242,7 +246,7 @@ public class Main {
                     double windDiff = Math.abs(weatherWind - forecastWind);
 
                     if (windDiff >= 2) {
-                        System.out.println("  Ветер было " + weatherWind + "м/с стало " + forecastWind + " м/с");
+                        System.out.println("  Ветер было " + weatherWind + " м/с стало " + forecastWind + " м/с");
                         hasDiff = true;
                     }
                 }
