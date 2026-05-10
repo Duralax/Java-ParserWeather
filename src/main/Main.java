@@ -125,18 +125,6 @@ public class Main {
         int pressure = Integer.parseInt(forecast.getPressure().replaceAll("[^0-9]", ""));
         int humidity = Integer.parseInt(forecast.getHumidity().replaceAll("[^0-9]", ""));
 
-        if (desc.contains("дождь")) {
-            System.out.println("Ожидается дождь. Возьмите зонт.");
-            if (desc.contains("сильный") || desc.contains("ливень")) {
-                System.out.println("Дождь может быть сильным.");
-            }
-        } else if (desc.contains("снег")) {
-            System.out.println("Ожидается снегопад.");
-            if (desc.contains("метель")) {
-                System.out.println("Возможна метель, ");
-            }
-        }
-
         // Температура
         if (temp > 25) {
             System.out.println("Очень жарко.");
@@ -273,7 +261,7 @@ public class Main {
                 }
 
                 if (!hasDiff) {
-                    System.out.println("  Прогноз полностью совпал с фактической погодой!");
+                    System.out.println("  Прогноз полностью совпал с фактической погодой");
                 }
             }
         }
