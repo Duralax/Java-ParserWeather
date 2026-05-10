@@ -35,7 +35,7 @@ public class Parser {
             weather.setCurrent_temperature("None");
         }
 
-        // Для ощущается как - в строке будет Ощущается как что-то
+        // Для ощущается как - в строке будет ощущается как что-то
 
         Element tempFeelElement = doc.selectFirst("[class*=AppFact_feels__base]");
 
