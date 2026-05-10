@@ -3,6 +3,7 @@ package main;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Locale;
+import java.util.regex.Matcher;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -121,7 +122,7 @@ public class Main {
         System.out.println(forecast.toString());
 
         String desc = forecast.getDescription().toLowerCase();
-        int temp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9-]", ""));
+        int temp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9−]", ""));
         int wind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9]", ""));
         int pressure = Integer.parseInt(forecast.getPressure().replaceAll("[^0-9]", ""));
         int humidity = Integer.parseInt(forecast.getHumidity().replaceAll("[^0-9]", ""));
@@ -175,15 +176,15 @@ public class Main {
             if (weather.getCurrent_temperature().equals("None") || forecast.getCurrent_temperature().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
             } else {
-                int weatherTemp = Integer.parseInt(weather.getCurrent_temperature().replaceAll("[^0-9-]", ""));
-                int forecastTemp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9-]", ""));
+                int weatherTemp = Integer.parseInt(weather.getCurrent_temperature().replaceAll("[^0-9−-]", ""));
+                int forecastTemp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9−-]", ""));
                 int tempDiff = weatherTemp - forecastTemp;
 
                 if (Math.abs(tempDiff) >= 4) {
                     if (tempDiff > 0){
-                        System.out.println(" Теплее на " + tempDiff + " °C");
+                        System.out.println(" Теплее на " +  Math.abs(tempDiff) + " °C");
                     } else {
-                        System.out.println(" Холоднее на " + tempDiff + " °C");
+                        System.out.println(" Холоднее на " +  Math.abs(tempDiff) + " °C");
                     }
                     hasDiff = true;
                 }
@@ -200,9 +201,9 @@ public class Main {
 
                 if (Math.abs(feelDiff) >= 4) {
                     if (feelDiff > 0){
-                        System.out.println("  Ощущается теплее на " + feelDiff + " °C");
+                        System.out.println("  Ощущается теплее на " +  Math.abs(feelDiff) + " °C");
                     } else {
-                        System.out.println("  Ощущается холоднее на " + feelDiff + " °C");
+                        System.out.println("  Ощущается холоднее на " +  Math.abs(feelDiff) + " °C");
                     }
                     hasDiff = true;
                 }
@@ -232,14 +233,20 @@ public class Main {
             if (weather.getWind().equals("None") || forecast.getWind().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
             } else {
-                int weatherWind = Integer.parseInt(weather.getWind().replaceAll("[^0-9]", ""));
-                int forecastWind = Integer.parseInt(forecast.getWind().replaceAll("[^0-9]", ""));
-                int windDiff = Math.abs(weatherWind - forecastWind);
 
-                if (windDiff >= 2) {
-                    System.out.println("  Ветер было " + forecast.getWind() + " стало " + weather.getWind());
-                    hasDiff = true;
+                Matcher weatherReg = java.util.regex.Pattern.compile("\\d+,?\\d*").matcher(weather.getWind());
+                Matcher forecastReg = java.util.regex.Pattern.compile("\\d+,?\\d*").matcher(forecast.getWind());
+                if (weatherReg.find() && forecastReg.find()) {
+                    double weatherWind = Double.parseDouble(weatherReg.group().replace(',', '.'));
+                    double forecastWind = Double.parseDouble(forecastReg.group().replace(',', '.'));
+                    double windDiff = Math.abs(weatherWind - forecastWind);
+
+                    if (windDiff >= 2) {
+                        System.out.println("  Ветер было " + weatherWind + "м/с стало " + forecastWind + " м/с");
+                        hasDiff = true;
+                    }
                 }
+
             }
 
             // Влажность разница 10+

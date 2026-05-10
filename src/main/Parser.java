@@ -138,7 +138,7 @@ public class Parser {
         // Ветер
         Element windElement = card.selectFirst("[style*='grid-area:" + part + "-wind']");
         if (windElement != null) {
-            forecast.setWind(windElement.text());
+            forecast.setWind(windElement.text() + " м/c");
         }else {
             forecast.setWind("None");
         }
