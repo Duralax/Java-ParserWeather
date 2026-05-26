@@ -1,22 +1,25 @@
 package main;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Locale;
+
 import java.util.regex.Matcher;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
 
-        Parser parser = new Parser();
-        FileStorage csv = new FileStorage();
+        //Parser parser = new Parser();
+        //FileStorage csv = new FileStorage();
         // запуск парсинга для прогноза на части дня для утра следующего дня, дня, вечера
         WeatherData forecastMorningNextDay = null;
         WeatherData forecastDayToday = null;
         WeatherData forecastEveningToday = null;
+        WeatherData forecastNightToday = null;
         // для теста вывода погоды и
-        WeatherData testForecast = parser.getForecast("утро");
-        WeatherData testWeather = parser.getCurrentWeather();
+        WeatherData testForecast = Parser.getForecast("утро");
+        WeatherData testWeather = Parser.getCurrentWeather();
         System.out.println(testWeather.toString());
         System.out.println(testForecast.toString());
         checkAndNotify(testWeather, testForecast);
@@ -32,16 +35,16 @@ public class Main {
 
             if (hours == 8 && minutes == 30){
                 try {
-                    weather = parser.getCurrentWeather();
+                    weather = Parser.getCurrentWeather();
                     System.out.println(weather.toString());
-                    csv.saveWeather(weather, "факт", "утро");
+                    FileStorage.saveWeather(weather, "факт", "утро");
                     checkAndNotify(weather, forecastMorningNextDay);
                     
-                    forecastDayToday = parser.getForecast("день");
-                    forecastEveningToday = parser.getForecast("вечер");
+                    forecastDayToday = Parser.getForecast("день");
+                    forecastEveningToday = Parser.getForecast("вечер");
 
-                    csv.saveWeather(forecastDayToday, "прогноз", "день");
-                    csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
+                    FileStorage.saveWeather(forecastDayToday, "прогноз", "день");
+                    //FileStorage.saveWeather(forecastEveningToday, "прогноз", "вечер");
                     showForecast(forecastDayToday, "день");
                     showForecast(forecastEveningToday, "вечер");
 
@@ -52,13 +55,13 @@ public class Main {
             }
             if (hours == 12 && minutes == 30){
                 try {
-                    weather = parser.getCurrentWeather();
+                    weather = Parser.getCurrentWeather();
                     System.out.println(weather.toString());
-                    csv.saveWeather(weather, "факт", "день");
+                    FileStorage.saveWeather(weather, "факт", "день");
                     checkAndNotify(weather, forecastDayToday);
 
-                    forecastEveningToday = parser.getForecast("вечер");
-                    csv.saveWeather(forecastEveningToday, "прогноз", "вечер");
+                    forecastEveningToday = Parser.getForecast("вечер");
+                    FileStorage.saveWeather(forecastEveningToday, "прогноз", "вечер");
                     showForecast(forecastEveningToday, "вечер");
 
                 } catch (Exception e) {
@@ -67,10 +70,14 @@ public class Main {
             }
             if (hours == 17 && minutes == 40){
                 try {
-                    weather = parser.getCurrentWeather();
+                    weather = Parser.getCurrentWeather();
                     System.out.println(weather.toString());
-                    csv.saveWeather(weather, "факт", "вечер");
+                    FileStorage.saveWeather(weather, "факт", "вечер");
                     checkAndNotify(weather, forecastEveningToday);
+
+                    forecastNightToday = Parser.getForecast("ночь");
+                    FileStorage.saveWeather(forecastNightToday, "прогноз", "ночь");
+                    showForecast(forecastNightToday, "ночь");
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
@@ -79,32 +86,35 @@ public class Main {
 
             if (hours == 20 && minutes == 0){
                 try {
-                    weather = parser.getCurrentWeather();
+                    weather = Parser.getCurrentWeather();
                     System.out.println(weather.toString());
-                    csv.saveWeather(weather, "факт", "поздний вечер");
-                    checkAndNotify(weather, null);
+                    FileStorage.saveWeather(weather, "факт", "ночь");
+                    checkAndNotify(weather, forecastNightToday);
 
-                    forecastMorningNextDay = parser.getForecast("утро");
-                    csv.saveWeather(forecastMorningNextDay, "прогноз", "утро");
+                    forecastMorningNextDay = Parser.getForecast("утро");
+                    forecastMorningNextDay.setDateTime(LocalDateTime.now().plusDays(1));
+
+                    FileStorage.saveWeather(forecastMorningNextDay, "прогноз", "утро");
                     showForecast(forecastMorningNextDay, "утро");
 
-                } catch (Exception e) {
-                    System.err.println("Ошибка: " + e.getMessage());
-                }
-            }
-
-
-            // потом убрать все что ниже
-            if ((hours == 8 && minutes == 30) || (hours == 12 && minutes == 30) || (hours == 17 && minutes == 40) || (hours == 20 && minutes == 0)){
-                try {
-                    weather = parser.getCurrentWeather();
-                    System.out.println(weather.toString());
-                    csv.saveWeather(weather, "-", "-");
+                    FileStorage.makeDailyReport(LocalDate.now());
 
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
                 }
             }
+
+            // потом убрать коммент
+//            if ((hours == 8 && minutes == 30) || (hours == 12 && minutes == 30) || (hours == 17 && minutes == 40) || (hours == 20 && minutes == 0)){
+//                try {
+//                    weather = Parser.getCurrentWeather();
+//                    System.out.println(weather.toString());
+//                    FileStorage.saveWeather(weather, "-", "-");
+//
+//                } catch (Exception e) {
+//                    System.err.println("Ошибка: " + e.getMessage());
+//                }
+//            }
 
             try {
                 Thread.sleep(60 * 1000);
@@ -131,7 +141,7 @@ public class Main {
         if (temp > 25) {
             System.out.println("Очень жарко.");
         } else if (temp > 15) {
-            System.out.println("Тепло. Хорошая погода для прогулок.");
+            System.out.println("Тепло.");
         } else if (temp > 5) {
             System.out.println("Ожидается прохладная погода.");
         } else if (temp > 0) {

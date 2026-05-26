@@ -50,6 +50,9 @@ public class WeatherData {
         return humidity;
     }
 
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
 
     public void setCity(String city) {
         this.city = city;

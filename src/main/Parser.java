@@ -12,7 +12,7 @@ public class Parser {
     private static final String URL_DETAILS = "https://yandex.ru/pogoda/ru/yekaterinburg/details";
     //private static final String URL_COMMON = "https://www.gismeteo.ru/weather-yekaterinburg-4517/now/";
 
-    public WeatherData getCurrentWeather() throws IOException{
+    public static WeatherData getCurrentWeather() throws IOException{
         Document doc = Jsoup.connect(URL_NOW).userAgent("Chrome/4.0.249.0 Safari/532.5")
                 .timeout(10000)
                 .get();
@@ -86,7 +86,7 @@ public class Parser {
         return weather;
     }
 
-    public WeatherData getForecast(String dayPart) throws IOException {
+    public static WeatherData getForecast(String dayPart) throws IOException {
         Document doc = Jsoup.connect(URL_DETAILS).userAgent("Chrome/4.0.249.0 Safari/532.5")
                 .timeout(10000)
                 .get();
@@ -104,12 +104,14 @@ public class Parser {
             System.out.println("\n" + "\n" + cards);
             card = cards.get(1);
             part = "m";
-        } else if (dayPart.equals("день") || dayPart.equals("вечер")) {
+        } else if (dayPart.equals("день") || dayPart.equals("вечер") || dayPart.equals("ночь")) {
             card = doc.selectFirst("li[class*=AppForecastDay_dayCard]");
             if (dayPart.equals("день")){
                 part = "d";
             } else if (dayPart.equals("вечер")){
                 part = "e";
+            } else if (dayPart.equals("ночь")) {
+                part = "n";
             }
         }
         // Температура
