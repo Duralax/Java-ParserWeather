@@ -50,9 +50,9 @@ public class FileStorage {
 
                 String line = weather.getDateTime().format(dateFormat) + ";" +
                         weather.getDateTime().format(timeFormat) + ";" +
-                         weather.getCity() + ";" +
                         type + ";" +
                         period + ";" +
+                        weather.getCity() + ";" +
                         weather.getCurrent_temperature() + ";"  +
                         weather.getTemperature_feel() + ";" +
                         weather.getDescription() + ";" +
@@ -72,7 +72,7 @@ public class FileStorage {
     public static void makeDailyReport(LocalDate date) throws IOException{
         String csvFile = "src/main/weather_data/weather_history.csv";
         List<String> lines = Files.readAllLines(Paths.get(csvFile), StandardCharsets.UTF_8);
-        if (lines.size() <= 1) {
+        if (lines.size() <= 2) {
             System.out.println("Нет данных для отчёта");
             return;
         }
@@ -97,16 +97,14 @@ public class FileStorage {
                     factMap.put("12:30", parts);
                 } else if (period.equals("вечер")) {
                     factMap.put("17:40", parts);
-                } else if (period.equals("ночь")) {
-                    factMap.put("20:00", parts);
                 }
             } else if (type.equals("прогноз")) {
                 if (period.equals("день") && time.equals("08:30")) {
-                    forecastMap.put("08:30", parts);
-                } else if (period.equals("вечер") && time.equals("12:30")) {
                     forecastMap.put("12:30", parts);
+                } else if (period.equals("вечер") && time.equals("12:30")) {
+                    forecastMap.put("17:40", parts);
                 } else if (period.equals("утро") && time.equals("20:00")) {
-                    forecastMap.put("00:00", parts);
+                    forecastMap.put("08:30", parts);
                 }
             }
         }
@@ -115,6 +113,7 @@ public class FileStorage {
             System.out.println("Шаблон не найден!");
             return;
         }
+
         String reportName = "daily_report_" + targetDate + ".xlsx";
         Files.copy(template.toPath(), Paths.get(reportName), StandardCopyOption.REPLACE_EXISTING);
 
@@ -123,7 +122,7 @@ public class FileStorage {
 
             XSSFSheet factSheet = workbook.getSheet("Данные_фактические");
             if (factSheet != null) {
-                String[] times = {"08:30", "12:30", "17:40", "00:00"};
+                String[] times = {"08:30", "12:30", "17:40"};
                 int rowIdx = 1;
                 for (String time : times) {
                     Row row = factSheet.getRow(rowIdx);
@@ -149,7 +148,7 @@ public class FileStorage {
 
             XSSFSheet forecastSheet = workbook.getSheet("Данные_прогноз");
             if (forecastSheet != null) {
-                String[] times = {"08:30", "12:30", "17:40", "00:00"};
+                String[] times = {"08:30", "12:30", "17:40"};
                 int rowIdx = 1;
                 for (String time : times) {
                     Row row = forecastSheet.getRow(rowIdx);
