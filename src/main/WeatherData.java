@@ -94,4 +94,13 @@ public class WeatherData {
                 "  Давление: " + pressure + " мм рт. ст. " + "\n" +
                 "  Влажность: " + humidity + "\n";
     }
+
+    public String toStringForecast(){
+        return "\nГород: " + city + "\n" +
+                "  Температура: " + current_temperature + " °C, по ощущениям как " + temperature_feel + " °C \n" +
+                "  Описание: " + description + "\n" +
+                "  Ветер: " + wind + "\n" +
+                "  Давление: " + pressure + " мм рт. ст. " + "\n" +
+                "  Влажность: " + humidity + "\n";
+    }
 }

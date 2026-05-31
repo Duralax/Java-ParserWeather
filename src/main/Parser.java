@@ -10,10 +10,9 @@ import java.io.IOException;
 public class Parser {
     private static final String URL_NOW = "https://yandex.ru/pogoda/ru/yekaterinburg";
     private static final String URL_DETAILS = "https://yandex.ru/pogoda/ru/yekaterinburg/details";
-    //private static final String URL_COMMON = "https://www.gismeteo.ru/weather-yekaterinburg-4517/now/";
 
     public static WeatherData getCurrentWeather() throws IOException{
-        Document doc = Jsoup.connect(URL_NOW).userAgent("Chrome/4.0.249.0 Safari/532.5")
+        Document doc = Jsoup.connect(URL_NOW).userAgent("Chrome/134.0.6998.166 Safari/537.36")
                 .timeout(10000)
                 .get();
         WeatherData weather = new WeatherData();
@@ -47,7 +46,7 @@ public class Parser {
             weather.setTemperature_feel("None");
         }
 
-        // Для описания погоды (убрать или адаптировать вторую часть описания, можно оставить для прогноза только в начале дня)
+        // Для описания погоды
 
         Element descElement = doc.selectFirst("[class*=AppFact_warning__first_text]");
         Element secondDescElement = doc.selectFirst("[class*=AppFact_warning__second]");
@@ -68,13 +67,17 @@ public class Parser {
         Elements details = doc.select("[class*=AppFact_details__item]");
 
         if (details.size() >= 3) {
-            // Для ветра (первый элемент)
-            weather.setWind(details.get(0).text());
+            // Для ветра, первый элемент
+            if (details.get(0).text().toLowerCase().contains("штиль")){
+                weather.setWind("0 м/с");
+            } else {
+                weather.setWind(details.get(0).text());
+            }
 
-            // Для давления (второй элемент)
+            // Для давления, второй элемент
             weather.setPressure(details.get(1).text());
 
-            // Для влажности (третий элемент)
+            // Для влажности, третий элемент
             weather.setHumidity(details.get(2).text());
 
         } else {
@@ -87,7 +90,7 @@ public class Parser {
     }
 
     public static WeatherData getForecast(String dayPart) throws IOException {
-        Document doc = Jsoup.connect(URL_DETAILS).userAgent("Chrome/4.0.249.0 Safari/532.5")
+        Document doc = Jsoup.connect(URL_DETAILS).userAgent("Chrome/134.0.6998.166 Safari/537.36")
                 .timeout(10000)
                 .get();
 

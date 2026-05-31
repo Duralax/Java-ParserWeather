@@ -114,11 +114,12 @@ public class FileStorage {
             return;
         }
 
-        String reportName = "daily_report_" + targetDate + ".xlsx";
-        Files.copy(template.toPath(), Paths.get(reportName), StandardCopyOption.REPLACE_EXISTING);
+        Files.createDirectories(Paths.get("src/main/reports"));
+        String reportName = "src/main/reports/daily_report_" + targetDate + ".xlsx";
 
-        try (FileInputStream in = new FileInputStream(reportName);
-             XSSFWorkbook workbook = new XSSFWorkbook(in)) {
+        try (FileInputStream in = new FileInputStream(template);
+             XSSFWorkbook workbook = new XSSFWorkbook(in);
+             FileOutputStream out = new FileOutputStream(reportName)) {
 
             XSSFSheet factSheet = workbook.getSheet("Данные_фактические");
             if (factSheet != null) {
@@ -129,9 +130,10 @@ public class FileStorage {
                     if (row == null){
                         row = factSheet.createRow(rowIdx);
                     }
+                    row.createCell(0).setCellValue(targetDate);
                     row.createCell(1).setCellValue(time);
                     String[] data = factMap.get(time);
-                    row.createCell(0).setCellValue(targetDate);
+                    
                     if (data != null) {
                         row.createCell(2).setCellValue(Integer.parseInt(data[5].replaceAll("[^0-9−]", ""))); // темп.
                         row.createCell(3).setCellValue(Integer.parseInt(data[6].replaceAll("[^0-9−]", ""))); // ощущается
@@ -173,10 +175,9 @@ public class FileStorage {
                     rowIdx++;
                 }
             }
-            try (FileOutputStream output = new FileOutputStream(reportName)) {
-                workbook.write(output);
-            }
+            workbook.write(out);
             System.out.println("Отчёт создан: " + reportName);
+
         }
 
     }

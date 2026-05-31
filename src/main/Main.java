@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ public class Main {
 
     public static String emailMessage = "";
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws IOException {
 
         //Parser parser = new Parser();
         //FileStorage csv = new FileStorage();
@@ -21,12 +22,14 @@ public class Main {
         WeatherData forecastEveningToday = null;
         //WeatherData forecastNightToday = null;
         // для теста вывода погоды и
-        WeatherData testForecast = Parser.getForecast("утро");
+
         WeatherData testWeather = Parser.getCurrentWeather();
         System.out.println(testWeather.toString());
+        WeatherData testForecast = Parser.getForecast("утро");
         System.out.println(testForecast.toString());
         checkAndNotify(testWeather, testForecast);
         showForecast(testForecast, "-");
+
         EmailNotify.send(emailMessage);
         WeatherData weather;
 
@@ -100,13 +103,21 @@ public class Main {
                     checkAndNotify(weather, null);
 
                     forecastMorningNextDay = Parser.getForecast("утро");
-                    forecastMorningNextDay.setDateTime(LocalDateTime.now().plusDays(1));
 
-                    FileStorage.saveWeather(forecastMorningNextDay, "прогноз", "утро");
                     showForecast(forecastMorningNextDay, "утро");
+                    forecastMorningNextDay.setDateTime(LocalDateTime.now().plusDays(1));
+                    FileStorage.saveWeather(forecastMorningNextDay, "прогноз", "утро");
 
                     FileStorage.makeDailyReport(LocalDate.now());
-                    EmailNotify.send(emailMessage);
+
+                    File reportFile = new File("src/main/reports/daily_report_" + LocalDate.now() + ".xlsx");
+                    if (reportFile.exists()){
+                        EmailNotify.send(emailMessage, reportFile);
+                        System.out.println();
+                    } else {
+                        EmailNotify.send(emailMessage);
+                    }
+
                 } catch (Exception e) {
                     System.err.println("Ошибка: " + e.getMessage());
                 }
@@ -125,8 +136,9 @@ public class Main {
     public static void showForecast(WeatherData forecast, String period){
 
         System.out.println("\nПрогноз погоды на " + period);
-        emailMessage += "\n\nПрогноз погоды на " + period;
-        System.out.println(forecast.toString());
+        emailMessage += "\n\n---------------------------\nПрогноз погоды на " + period;
+        System.out.println(forecast.toStringForecast());
+        emailMessage += "\n" + forecast.toStringForecast();
 
         String desc = forecast.getDescription().toLowerCase();
         int temp = Integer.parseInt(forecast.getCurrent_temperature().replaceAll("[^0-9−]", ""));
@@ -236,7 +248,7 @@ public class Main {
                 }
             }
 
-            // Описание !поменять на более корректное сравнение для описаний (в прогнозе не такое полное)!
+            // Описание
             if (weather.getDescription().equals("None") || forecast.getDescription().equals("None")) {
                 System.out.println("Данные для сравнения неполные");
                 emailMessage += "\nДанные для сравнения неполные";
